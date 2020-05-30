@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kgc.news.dao.News_detailDao">
+
+    <select id="query" resultType="News_detail">
+
+        select d.id,d.author,d.created,d.summary,d.title,c.id
+        from  News_detail  d
+        INNER   JOIN news_comment c
+        on d.id=c.newsid
+        <where>
+
+            <if test="title!=null and title!=''">
+                title like '%${title}%'
+            </if>
+        </where>
+
+
+
+        limit #{start},5
+
+    </select>
+
+
+
+    <select id="count" resultType="int" parameterType="java.lang.String">
+        select count(1) from News_detail
+
+
+    </select>
+    <!--删除新闻-->
+    <delete id="delNew">
+        delete  from News_detail where id =#{id}
+    </delete>
+
+
+    <select id="getquary" resultType="News_detail">
+        select * from News_detail where id=#{id}
+    </select>
+
+
+
+
+</mapper>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="js/jquery-1.12.4.min.js" ></script>
+    <style>
+        table tr:nth-child(odd) {
+
+            background: beige;
+        }
+
+
+        table th {
+            text-align: center;
+            font-weight: bold;
+        }
+        tr{
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+新闻标题：<input name="title" id="title">  <button class="chaxun">查询</button>
+<table class="yi" border="1" center></table>
+<table>
+    <tr>
+        <td><button class="first">首页</button></td>
+        <td><button class="up">上一页</button></td>
+        <td><button class="next">下一页</button></td>
+        <td><button class="last">尾页</button></td></br>
+        <td> <span class="pageon">1</span></td>
+        <td>  <span class="pages"></span></td>
+    </tr>
+</table>
+
+<script type="text/javascript">
+    $(function () {//完成加载事件
+        $.ajax({
+            url:'quan',  //请求地址
+            type:'POST',
+            dataType:'json',
+            data:{'pageon':'1'
+
+            },
+            success:function (p) {
+                //   alert(p+'这是我点击按钮')
+                fenye(p);//调用分页方法
+            }
+        })
+
+
+
+        $('.chaxun').click(function () {//点击按钮完成加载事件
+            var title=$('[name=title]').val();
+            alert(title);
+            $.ajax({
+                url:'quan',
+                type:'POST',
+                dataType:'json',
+                data:{'pageon':'1',
+                    'title':title
+
+                },
+                success:function (p) {
+                    alert(p+'这是我点击按钮')
+                    fenye(p);//调用分页方法
+                }
+            })
+
+        })
+        //首页  需要参数 当前页 1
+        $('.first').click(function () {
+            $.ajax({
+                url:'quan',
+                type:'POST',
+                dataType:'json',
+                data:{'pageon':1,
+                    'title':$('[name=title]').val()
+
+                },
+                success:function (p) {
+                    //alert(p+'这是首页');
+                    fenye(p);
+                }
+
+            })
+
+
+        })
+        //上一页  需要参数  当前页  当前页 减 1 需要先获取 当前页和总页数
+        $('.up').click(function () {
+            var pageon = parseInt($('.pageon').html());
+            var pages = parseInt($('.pages').html());
+            if(pageon>1){
+                var m = pageon -1;
+                $.ajax({
+                    url:'quan',
+                    type:'POST',
+                    dataType:'json',
+                    data:{'pageon':m,
+                        'title':$('[name=title]').val()
+
+
+                    },
+                    success:function (p) {
+                        //alert(p+'这是我上一页')
+                        fenye(p);
+                    }
+                })
+            }else{
+                alert('已经是首页')
+            }
+
+        })
+        //下一页  需要参数  当前页  当前页 加1 需要先获取 当前页和总页数
+        $('.next').click(function () {
+            var pageon = parseInt($('.pageon').html());
+            var pages = parseInt($('.pages').html());
+            if(pageon<pages){
+                var m = pageon+1;
+                $.ajax({
+                    url:'quan',
+                    type:'POST',
+                    dataType:'json',
+                    data:{'pageon':m,
+                        'title':$('[name=title]').val()
+
+                    },
+                    success:function (p) {
+                        // alert(p+'这是我下一页')
+                        fenye(p);
+                    }
+                })
+            }else{
+                alert("已经是最后一页")
+            }
+        })
+        //尾页 需要参数 总页数
+        $('.last').click(function () {
+            var pages = parseInt($('.pages').html());
+            $.ajax({
+                url:'quan',
+                type:'POST',
+                dataType:'json',
+                data:{'pageon':pages,
+                    'title':$('[name=title]').val()
+
+                },
+                success:function (p) {
+                    // alert(p+'这是我的尾页')
+                    fenye(p);
+                }
+
+            })
+
+        })
+
+    })
+
+
+    ////////分页方法
+    function fenye(p) {
+        alert(p+'这是我分页查询方法');
+
+        $('.yi').html("<tr ><td>新闻编号</td>" +
+            "<td>新闻名称</td>" +
+            "<td>新闻摘要</td>" +
+            "<td>作者</td>" +
+            "<td>创建时间</td>" +
+            "<td>操作</td></tr>")
+        $.each(p.li,function (i,n) {
+            $('.yi').append(
+                "<tr>"+
+                "<td>"+n.id+"</td>"+
+                "<td>"+n.title+"</td>"+
+                "<td>"+n.summary+"</td>"+
+                "<td>"+n.author+"</td>"+
+                "<td>"+n.created+"</td>"+
+                " <td >" +"<a href='#' onclick='kan("+n.id+")'>查看评论|   </a>"+
+                "<a href='#' onclick='dian("+n.id+")'>评论|  </a>   " +
+                " <a href='#' onclick='shan("+n.id+")'>删除</a></td>"+
+                "</tr>"
+
+            )
+            $('.pageon').html(p.pageon);
+            $('.pages').html(p.pages);
+
+        })
+
+
+    }
+    //添加评论
+    function dian(id) {
+        location.href="aa?id="+id;
+    }
+    //查看评论
+
+    function kan(id) {
+        location.href="bb?id="+id;
+    }
+
+    /**
+     * 删除
+     *
+     */
+    function shan(id) {
+        if(confirm("确定要删除吗？")){
+            $.ajax({
+                url:"delNews",
+                type:"GET",
+                data:"id="+id,
+                dataType:"json",
+                success:function (result) {
+                    if(result!=""){
+                        if(result.result==true && result.flag==1){
+                            alert("删除成功");
+                            fenye(p);
+                        }
+                    }
+
+                }
+            })
+        }
+
+    }
+
+</script>
+</body>
+
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div>
+    <h2>评论列表</h2><button onclick="fanhui()">返回新闻列表</button>
+
+
+    <table border="1" id="yi">
+     </table>
+
+</div>
+<script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
+<script>
+    $(function () {
+        var id= window.location.search.split("id=")[1];
+        $.ajax({
+            url:"byId",
+            tyep:"get",
+            datatype:"json",
+            data:{
+                "id":id
+            },
+            success:function(result){
+                $("#yi").append("<tr><th>评论编号</th><th>评论内容</th> <th>评论人</th> <th>评论时间</th></tr>")
+                $.each(result,function (i,n) {
+                    $("#yi").append(
+                        "<tr>"+
+                            "<td>"+n.id+"</td>"+
+                        "<td>"+n.content+"</td>"+
+                        "<td>"+n.author+"</td>"+
+                        "<td>"+n.createdate+"</td>"+
+                            "</tr>"
+                    )
+
+                })
+            }
+
+        })
+
+    })
+    function fanhui() {
+        location.href="index"
+    }
+
+
+</script>
+</body>
+</html>

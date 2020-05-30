@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kgc.news.dao.News_commentDao">
+    <select id="getbyId" resultType="News_comment">
+            select c.id,c.newsid ,c.content,c.author,c.createdate
+from  News_detail  d
+INNER   JOIN news_comment c
+on d.id=c.newsid
+WHERE
+d.id=#{id}
+    </select>
+
+    <insert id="addComment">
+        insert  into  News_comment(newsid,content,author,createdate)
+        values (#{newsid},#{content},#{author},now())
+
+    </insert>
+</mapper>

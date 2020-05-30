@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div>
+
+    <table>
+        <h2>增加评论</h2>
+
+        <tr>
+
+            <td>评论内容:</td>
+            <td><textarea type="text" name="content"></textarea> </td>
+        </tr>
+        <tr>
+            <td>评论人:</td><td><input type="text" name="author"/> </td>
+        </tr>
+        <tr>
+            <td><button class="tijiao">提交</button></td>
+            <td><button class="fanhui">返回</button> </td>
+        </tr>
+
+    </table>
+</div>
+<script type="text/javascript" src="js/jquery-1.12.4.min.js" ></script>
+<script>
+    $(function () {
+        $(".fanhui").click(function () {
+            location.href="index.html";
+        })
+
+        $(".tijiao").click(function () {
+            var content=$("[name=content]").val();
+            var  author=$("[name=author]").val();
+            var id= window.location.search.split("id=")[1];
+            alert(id+"id--------------")
+            var param={};
+            param.content=content;
+            param.author=author;
+            param.newsid=id
+            alert(JSON.stringify(param));
+            $.ajax({
+                url:"addCom",
+                type:"POST",
+                datatype:"json",
+
+                data:param,
+                success:function (result) {
+
+                    alert("添加成功")
+                    alert(result)
+                    location.href="index";
+
+
+                }
+            })
+
+        })
+
+    })
+</script>
+</body>
+</html>
